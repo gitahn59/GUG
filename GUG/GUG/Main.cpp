@@ -9,6 +9,7 @@
 #include <iostream>
 #include <glut.h>
 #include "State.h"
+#include "Control.h"
 
 using namespace std;
 
@@ -21,9 +22,22 @@ GraphDrawing graphDrawing;
 void mouseCallback(int button, int state, int x, int y) {
 	if (state != GLUT_DOWN)
 		return;
-	int type = st->getType();
+	y = glutGet(GLUT_WINDOW_HEIGHT)-y;
+	st->mouseCallback(button, state, x, y);
+}
 
-	if (button == GLUT_LEFT_BUTTON) {
+void displayCallback() {
+	st->displayCallback();
+}
+
+void reshapeCallback(int width, int height) {
+	st->reshpeCallback(width,height);
+	glutPostRedisplay();
+}
+
+void specialCallback(int key, int x, int y) {
+	int type = st->getType();
+	if (key == GLUT_KEY_LEFT) {
 		switch (type) {
 		case 0:
 			break;
@@ -38,7 +52,7 @@ void mouseCallback(int button, int state, int x, int y) {
 			break;
 		}
 	}
-	else if (button == GLUT_RIGHT_BUTTON) {
+	else if (key == GLUT_KEY_RIGHT) {
 		switch (type) {
 		case 0:
 			st = &equation;
@@ -53,14 +67,8 @@ void mouseCallback(int button, int state, int x, int y) {
 			break;
 		}
 	}
-
-	st->mouseCallback(button, state, x, y);
+	glutPostRedisplay();
 }
-
-void displayCallback() {
-	st->displayCallback();
-}
-
 
 int main(int argc, char** argv) {
 	st = &varibleSelection;
@@ -72,6 +80,11 @@ int main(int argc, char** argv) {
 	// Callback Setting Up
 	glutDisplayFunc(displayCallback);
 	glutMouseFunc(mouseCallback);
+	glutReshapeFunc(reshapeCallback);
+	glutSpecialFunc(specialCallback);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glutMainLoop();
 	return 0;

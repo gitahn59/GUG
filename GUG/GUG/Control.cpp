@@ -1,13 +1,13 @@
 #include "Control.h"
 #include <glut.h>
 
-Rectangle::Rectangle(int x, int y,int width, int heigth) {
+Rect::Rect(int x, int y,int width, int heigth) {
 	this->x = x;
 	this->y = y;
 	this->width = width;
 	this->height = heigth;
 }
-bool Rectangle::isIn(int x, int y) {
+bool Rect::isIn(int x, int y) {
 	if (this->x < x && x < this->x + width) {
 		if (this->y < y && y < this->y + height) {
 			return true;
@@ -15,25 +15,35 @@ bool Rectangle::isIn(int x, int y) {
 	}
 	return false;
 }
-int Rectangle::getX() {
+int Rect::getX() {
 	return x;
 }
-int Rectangle::getY() {
+int Rect::getY() {
 	return y;
 }
-int Rectangle::getWidth() {
+int Rect::getWidth() {
 	return width;
 }
-int Rectangle::getHeight() {
+int Rect::getHeight() {
 	return height;
 }
 
-void Button::setArea(Rectangle area) {
+// Button : s
+void Button::setArea(Rect area) {
 	this->area = area;
 }
 
-Button::Button(Rectangle area){
+Button::Button(Rect area,string text){
 	this->area = area;
+	this->text = text;
+}
+
+void Button::setText(string text) {
+	this->text = text;
+}
+
+string Button::toString(){
+	return this->text;
 }
 
 void Button::draw() {
@@ -57,12 +67,14 @@ bool Button::isHover(int x, int y) {
 	return area.isIn(x, y);
 }
 
+//Button : e
 
-void TextBox::setArea(Rectangle area) {
+//TextBox : s
+void TextBox::setArea(Rect area) {
 	this->area = area;
 }
 
-TextBox::TextBox(Rectangle area) {
+TextBox::TextBox(Rect area) {
 	this->area = area;
 }
 

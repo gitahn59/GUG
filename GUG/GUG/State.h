@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Control.h"
-
+#include "MathExpression.h"
 /*
 interface class
 */
@@ -29,10 +29,11 @@ public:
 
 class Equation : public IState {
 private:
-	Button buttons[5][6];
+	Button buttons[4][5];
 	TextBox textBox;
 	int width;
 	int height;
+	vector<MathExpression*> expressions;
 public:
 	Equation();
 	void displayCallback() override;

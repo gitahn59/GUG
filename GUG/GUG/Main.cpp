@@ -19,6 +19,16 @@ Equation equation;
 OperationSetting operationSetting;
 GraphDrawing graphDrawing;
 
+GLuint base;
+
+GLvoid glPrint(const char* text)
+{
+	glPushAttrib(GL_LIST_BIT); //<1>
+	glListBase(base - 32); //<2>
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text); //<3>
+	glPopAttrib(); //<4>
+}
+
 void mouseCallback(int button, int state, int x, int y) {
 	if (state != GLUT_DOWN)
 		return;
@@ -26,8 +36,11 @@ void mouseCallback(int button, int state, int x, int y) {
 	st->mouseCallback(button, state, x, y);
 }
 
+
+
 void displayCallback() {
 	st->displayCallback();
+	glutSwapBuffers();
 }
 
 void reshapeCallback(int width, int height) {

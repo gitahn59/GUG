@@ -3,6 +3,10 @@
 /*
 interface class
 */
+#include <string>
+
+using namespace std;
+
 class IControl
 {
 public:
@@ -10,15 +14,15 @@ public:
 	virtual bool isHover(int x,int y) = 0;
 };
 
-class Rectangle {
+class Rect {
 private:
 	int x;
 	int y;
 	int width;
 	int height;
 public:
-	Rectangle() {}
-	Rectangle(int x, int y, int width, int height);
+	Rect() {}
+	Rect(int x, int y, int width, int height);
 	bool isIn(int x,int y);
 	int getX();
 	int getY();
@@ -28,23 +32,26 @@ public:
 
 class Button : public IControl {
 private:
-		Rectangle area;
+		Rect area;
+		string text;
 public:
 	Button() {}
-	Button(Rectangle area);
+	Button(Rect area,string text);
 	void draw() override;
 	bool isHover(int x, int y) override;
-	void setArea(Rectangle area);
+	void setArea(Rect area);
+	string toString();
+	void setText(string text);
 };
 
 class TextBox : public IControl {
 private:
-	Rectangle area;
+	Rect area;
 public:
 	TextBox() {}
-	TextBox(Rectangle area);
+	TextBox(Rect area);
 	void draw() override;
 	bool isHover(int x, int y) override;
-	void setArea(Rectangle area);
+	void setArea(Rect area);
 };
 

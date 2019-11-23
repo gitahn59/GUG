@@ -34,10 +34,10 @@ public:
 	Operand(enum oprd type, double a, double b);
 
 	// x를 사용하는 NUMBER, SIN, COS, TAN
-	Operand(enum oprd type, bool usingX);
+	Operand(bool usingX, enum oprd type);
 
 	//root a(root(b)), logab, exponentiation(b^a)
-	Operand(enum oprd type, bool usingX, double a);
+	Operand(bool usingX, enum oprd type, double a);
 
 	double getValue(double x);
 

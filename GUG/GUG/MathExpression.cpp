@@ -1,4 +1,5 @@
 #include "MathExpression.h"
+#include <string>
 
 using namespace std;
 
@@ -57,14 +58,16 @@ vector<MathExpression*> MathExpression::postOrder(vector<MathExpression*> ve) {
 	return post;
 }
 
-//number, sin, cos, tan 고정값
+
+
+//number, sin, cos, tan, log,고정값
 Operand::Operand(enum oprd type, double a) {
 	this->type = type;
 	this->a = a;
 	usingX = false;
 }
 
-//root a(root(b)), logab, exponentiation(b^a)
+//root a(root(b)), exponentiation(b^a)
 Operand::Operand(enum oprd type, double a, double b) {
 	this->type = type;
 	this->a = a;
@@ -72,14 +75,14 @@ Operand::Operand(enum oprd type, double a, double b) {
 	usingX = false;
 }
 
-// x를 사용하는 NUMBER, SIN, COS, TAN
-Operand::Operand(enum oprd type, bool usingX) {
+// x를 사용하는 NUMBER, SIN, COS, TAN, log
+Operand::Operand(bool usingX,enum oprd type ) {
 	this->type = type;
 	usingX = true;
 }
 
-//root a(root(b)), logab, exponentiation(b^a)
-Operand::Operand(enum oprd type, bool usingX, double a) {
+//x를 사용하는 root a(root(b)), exponentiation(b^a)
+Operand::Operand(bool usingX,enum oprd type, double a) {
 	this->type = type;
 	this->a = a;
 	usingX = true;

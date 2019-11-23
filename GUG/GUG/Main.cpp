@@ -19,24 +19,20 @@ Equation equation;
 OperationSetting operationSetting;
 GraphDrawing graphDrawing;
 
-GLuint base;
-
-GLvoid glPrint(const char* text)
-{
-	glPushAttrib(GL_LIST_BIT); //<1>
-	glListBase(base - 32); //<2>
-	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text); //<3>
-	glPopAttrib(); //<4>
-}
-
 void mouseCallback(int button, int state, int x, int y) {
 	if (state != GLUT_DOWN)
 		return;
 	y = glutGet(GLUT_WINDOW_HEIGHT)-y;
 	st->mouseCallback(button, state, x, y);
+	int type = st->getType();
+	switch (type) {
+	case 1:
+		Equation * pE = (Equation *)st;
+		if (pE->isNextBtnClicked()) {
+			st = &graphDrawing;
+		}
+	}
 }
-
-
 
 void displayCallback() {
 	st->displayCallback();

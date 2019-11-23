@@ -29,11 +29,12 @@ public:
 
 class Equation : public IState {
 private:
-	Button buttons[4][5];
+	Button buttons[4][7];
 	TextBox textBox;
 	int width;
 	int height;
-	vector<MathExpression*> expressions;
+	string expression = "";
+	bool nextBtnClicked=false;
 public:
 	Equation();
 	void displayCallback() override;
@@ -42,6 +43,14 @@ public:
 	void reshpeCallback(int width, int height) override;
 	int getType() override;
 	void setControlsPosition(int width, int height);
+	vector<MathExpression*> getExpression();
+	bool isNextBtnClicked() {
+		if (nextBtnClicked) {
+			nextBtnClicked = false;
+			return true;
+		}
+		return false;
+	}
 };
 
 class OperationSetting : public IState {

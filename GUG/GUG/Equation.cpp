@@ -54,8 +54,7 @@ void Equation::setControlsPosition(int width, int height) {
 }
 
 void Equation::displayCallback() {
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	setControlsPosition(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
 	glMatrixMode(GL_VIEWPORT);
 	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
@@ -74,7 +73,8 @@ void Equation::displayCallback() {
 	glEnd();
 	glPopMatrix();
 
-	setControlsPosition(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+	glMatrixMode(GL_VIEWPORT);
+	glPopMatrix();
 
 	for (int i = 0; i < 4; i++) {
 		for (int k = 0; k < 7; k++) {
@@ -82,9 +82,6 @@ void Equation::displayCallback() {
 		}
 	}
 	textBox.draw();
-
-	glMatrixMode(GL_VIEWPORT);
-	glPopMatrix();
 
 }
 
@@ -121,117 +118,7 @@ bool validation(string expression) {
 	}
 }
 
-Operand stringToOperand(string s) {
-	if (s == "X") {
-		return Operand(true,OP_NUMBER);
-	}
 
-	try {
-		if (s == "sX") {
-			return Operand(true,OP_SIN);
-		}
-		else if (s == "cX") {
-			return Operand(true,OP_COS);
-		}
-		else if (s == "tX") {
-			return Operand(true,OP_TAN);
-		}
-		else if (s == "lX") {
-			return Operand(true,OP_LOG);
-		}
-		else if (s == "rX") {
-			return Operand(true,OP_ROOT);
-		}
-
-		if (s.length() >= 2)
-			switch (s[0]) {
-			case 's':
-				return Operand(OP_SIN, stof(s.substr(1, s.length() - 1)));
-			case 'c':
-				return Operand(OP_COS, stof(s.substr(1, s.length() - 1)));
-			case 't':
-				return Operand(OP_TAN, stof(s.substr(1, s.length() - 1)));
-			case 'l':
-				return Operand(OP_LOG, stof(s.substr(1, s.length() - 1)));
-			case 'r':
-				return Operand(OP_ROOT, stof(s.substr(1, s.length() - 1)));
-			case 'X':
-				if (s[1] == '^') {
-					return Operand(true,OP_EXPONENTIATION, stof(s.substr(2, s.length() - 2)));
-				}
-			}
-
-		return Operand(OP_NUMBER, stof(s));
-	}
-	catch (std::invalid_argument ia) {
-		return Operand(OP_NUMBER, 0.0);
-	}
-}
-
-vector<MathExpression*> Equation::getExpression() {
-	vector<MathExpression*> vm;
-
-	int len = expression.length();
-	std::string s = expression;
-
-	vector<string> voperand;
-	vector<char> voperator;
-
-	int pos = 0;
-	for (int i = 0; i < len; i++) {
-		string temp = "";
-		switch (s[i]) {
-		case '/':
-			temp = s.substr(pos, i);
-			if (temp != "") {
-				vm.push_back(&stringToOperand(temp));
-			}
-			pos = i + 1;
-			vm.push_back(&Operator(OP_DEVIDE));
-			break;
-		case '*':
-			temp = s.substr(pos, i);
-			if (temp != "")
-				vm.push_back(&stringToOperand(temp));
-			pos = i + 1;
-			vm.push_back(&Operator(OP_MULTIPLE));
-			break;
-		case '+':
-			temp = s.substr(pos, i);
-			if (temp != "")
-				vm.push_back(&stringToOperand(temp));
-			pos = i + 1;
-			vm.push_back(&Operator(OP_PLUS));
-			break;
-		case '-':
-			temp = s.substr(pos, i);
-			if (temp != "")
-				vm.push_back(&stringToOperand(temp));
-			pos = i + 1;
-			vm.push_back(&Operator(OP_MINUS));
-			break;
-		case '(':
-			temp = s.substr(pos, i);
-			if (temp != "")
-				vm.push_back(&stringToOperand(temp));
-			pos = i + 1;
-			vm.push_back(&Operator(OP_LEFT_BRACKET));
-			break;
-		case ')':
-			temp = s.substr(pos, i);
-			if (temp != "")
-				vm.push_back(&stringToOperand(temp));
-			pos = i + 1;
-			vm.push_back(&Operator(OP_RIGHT_BRACKET));
-			break;
-		}
-	}
-	string temp = s.substr(pos, len);
-	if (temp != "")
-		vm.push_back(&stringToOperand(temp));
-
-	return vm;
-}
 
 void Equation::mouseCallback(int button, int state, int x, int y) {
 	for (int i = 0; i < 4; i++) {
@@ -251,7 +138,7 @@ void Equation::mouseCallback(int button, int state, int x, int y) {
 						expression += text;
 				}
 				cout << expression << endl;
-				getExpression();
+				
 				i = 5;
 				break;
 			}
@@ -267,9 +154,6 @@ int Equation::getType() {
 }
 
 void OperationSetting::displayCallback() {
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	glMatrixMode(GL_VIEWPORT);
 	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 	glPushMatrix();

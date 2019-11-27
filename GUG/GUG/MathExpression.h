@@ -3,13 +3,16 @@
 #include <cmath>
 #include <stack>
 #include <vector>
+#include <string>
 
 using namespace std;
 
-class MathExpression {
+typedef pair<float, float> ff;
+typedef pair<bool, ff> bff;
+
+class OP {
 public:
 	virtual bool isOperator() = 0;
-	static vector<MathExpression*> postOrder(vector<MathExpression*> ve);
 };
 
 enum op {
@@ -20,7 +23,7 @@ enum oprd {
 	OP_SIN, OP_COS, OP_TAN, OP_ROOT, OP_LOG, OP_EXPONENTIATION, OP_NUMBER
 };
 
-class Operand :public MathExpression {
+class Operand :public OP {
 private:
 	double a=0, b=0;
 	enum oprd type;
@@ -44,7 +47,7 @@ public:
 	bool isOperator() override;
 };
 
-class Operator :public MathExpression {
+class Operator :public OP {
 private:
 	enum op type = OP_PLUS;
 	int priority = 0;
@@ -55,3 +58,16 @@ public:
 	enum op getType();
 };
 
+class Expression {
+private:
+	vector<OP*> inorderExpression;
+	vector<OP*> postorderExpression;
+
+	void inToPost();
+	Operand* stringToOperand(string s);
+public:
+	Expression() {}
+	Expression(string exp);
+	~Expression();
+	vector<bff> calculate(float start, float end, float interver);
+};

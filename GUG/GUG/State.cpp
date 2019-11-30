@@ -97,7 +97,7 @@ void GraphDrawing::displayCallback() {
 		h = w;
 	}
 
-	btn.setArea(Rect(width / 2 + w / 1.9, height / 8, w / 6, height / 6));
+	btn.setArea(Rect(width / 2 + w / 1.9, height / 20, w / 6, height / 6));
 	btn.draw();
 
 	glViewport(width/2-w/2, height/2-h/2, w,h);

@@ -44,15 +44,15 @@ double Operand::getValue(double x) {
 	case OP_SIN:
 		if (usingX)
 			return sin(x);
-		return a;
+		return sin(a);
 	case OP_COS:
 		if (usingX)
 			return cos(x);
-		return a;
+		return cos(a);
 	case OP_TAN:
 		if (usingX)
 			return tan(x);
-		return a;
+		return tan(a);
 	case OP_EXPONENTIATION:
 		if (usingX)
 			return pow(x, a);

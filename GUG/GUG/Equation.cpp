@@ -1,3 +1,13 @@
+//============================================================================
+// Name        : Equation.cpp
+// Author      : gitahn59
+// Version     : 1.0
+// Copyright   : MIT
+// Description : IState.h의 Class중에서 Equation Class를 구현
+//               Equation은 사용자로부터 수식을 입력받고 처리한다.
+//============================================================================
+
+#pragma once
 #include "State.h"
 #include "Control.h"
 #include "MathExpression.h"
@@ -12,19 +22,25 @@ Equation::Equation() {
 	setControlsPosition(width, height);
 
 	buttons[3][0].setText("r");
+	buttons[3][0].setPrintedText("sqrt");
 	buttons[3][1].setText("7");
 	buttons[3][2].setText("8");
 	buttons[3][3].setText("9");
 	buttons[3][4].setText("/");
+	//buttons[3][4].setPrintedText("÷");
 	buttons[3][5].setText("<-");
 	buttons[3][6].setText("X");
 
 	buttons[2][0].setText("l");
+	buttons[2][0].setPrintedText("log");
 	buttons[2][1].setText("4");
 	buttons[2][2].setText("5");
 	buttons[2][3].setText("6");
 	buttons[2][4].setText("*");
+	//buttons[2][4].setPrintedText("x");
 	buttons[2][5].setText("s");
+	buttons[2][5].setPrintedText("sin");
+	buttons[2][6].setText("C");
 
 	buttons[1][0].setText("^");
 	buttons[1][1].setText("1");
@@ -32,6 +48,7 @@ Equation::Equation() {
 	buttons[1][3].setText("3");
 	buttons[1][4].setText("-");
 	buttons[1][5].setText("c");
+	buttons[1][5].setPrintedText("cos");
 
 	buttons[0][0].setText("(");
 	buttons[0][1].setText(")");
@@ -39,6 +56,7 @@ Equation::Equation() {
 	buttons[0][3].setText(".");
 	buttons[0][4].setText("+");
 	buttons[0][5].setText("t");
+	buttons[0][5].setPrintedText("tan");
 	buttons[0][6].setText("NEXT");
 }
 
@@ -50,38 +68,30 @@ void Equation::setControlsPosition(int width, int height) {
 			buttons[i][k].setArea(Rect(k * a, i * b, a, b));
 		}
 	}
+	buttons[0][6].setArea(Rect(6*a, 0, a, 2*b));
 	textBox.setArea(Rect(a * 1.5, b * 4, a * 5.5, b));
 }
 
 void Equation::displayCallback() {
 	setControlsPosition(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
-	glMatrixMode(GL_VIEWPORT);
-	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-	glPushMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glColor4f(0.35, 0.16, 0.55, 1);
-	glVertex3f(-1, -1, 0);
-	glVertex3f(1, -1, 0);
-	glColor4f(0.26, 0.52, 0.63, 1);
-	glVertex3f(1, 1, 0);
-	glVertex3f(-1, 1, 0);
-	glEnd();
-	glPopMatrix();
-
-	glMatrixMode(GL_VIEWPORT);
-	glPopMatrix();
-
+	drawPanel();
+	
 	for (int i = 0; i < 4; i++) {
 		for (int k = 0; k < 7; k++) {
-			buttons[i][k].draw();
+			if (i == 1 && k == 6)
+				continue;
+
+			if (buttons[i][k].getIsHover()) {
+				buttons[i][k].drawLight();
+			}
+			else {
+				buttons[i][k].draw();
+			}
 		}
 	}
-	textBox.draw();
+
+	textBox.draw(expression);
 
 }
 
@@ -116,19 +126,24 @@ bool validation(string expression) {
 			}
 		}
 	}
+	return true;
 }
-
-
 
 void Equation::mouseCallback(int button, int state, int x, int y) {
 	for (int i = 0; i < 4; i++) {
 		for (int k = 0; k < 7; k++) {
+			if (i == 1 && k == 6)
+				continue;
+
 			if (buttons[i][k].isHover(x, y)) {
 				string text = buttons[i][k].toString();
 				if (text == "<-") {
 					if (expression != "") {
 						expression = expression.substr(0, expression.length() - 1);
 					}
+				}
+				else if (text == "C") {
+					expression = "";
 				}
 				else if (text == "NEXT") {
 					nextBtnClicked = true;
@@ -138,7 +153,6 @@ void Equation::mouseCallback(int button, int state, int x, int y) {
 						expression += text;
 				}
 				cout << expression << endl;
-				
 				i = 5;
 				break;
 			}
@@ -153,22 +167,12 @@ int Equation::getType() {
 	return 1;
 }
 
-void OperationSetting::displayCallback() {
-	glMatrixMode(GL_VIEWPORT);
-	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-	glPushMatrix();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glColor4f(0.35, 0.16, 0.55, 1);
-	glVertex3f(-1, -1, 0);
-	glVertex3f(1, -1, 0);
-	glColor4f(0.26, 0.52, 0.63, 1);
-	glVertex3f(1, 1, 0);
-	glVertex3f(-1, 1, 0);
-	glEnd();
-	glPopMatrix();
-
+void Equation::passiveMotionCallback(int x, int y) {
+	for (int i = 0; i < 4; i++) {
+		for (int k = 0; k < 7; k++) {
+			if (buttons[i][k].isHover(x, y)) {
+				buttons[i][k].setIsHover();
+			}
+		}
+	}
 }

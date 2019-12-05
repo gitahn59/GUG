@@ -25,7 +25,7 @@ GraphDrawing graphDrawing;
 Expression* expression;
 
 void loadTexture(void) {
-	AUX_RGBImageRec* pTextureImage = auxDIBImageLoad("apple.bmp"); // 유니코드 스트링임을 명시
+	AUX_RGBImageRec* pTextureImage = auxDIBImageLoad("arrow.bmp"); // 유니코드 스트링임을 명시
 
 	if (pTextureImage != NULL) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -69,7 +69,7 @@ void mouseCallback(int button, int state, int x, int y) {
 
 void displayCallback() {
 	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	st->displayCallback();
 	glutSwapBuffers();
 }
@@ -95,7 +95,7 @@ void passiveMotionCallback(int x, int y) {
 }
 
 int main(int argc, char** argv) {
-	loadTexture();
+	
 	st = &equation;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -108,8 +108,8 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshapeCallback);
 	glutSpecialFunc(specialCallback);
 	glutPassiveMotionFunc(passiveMotionCallback);
-
-	glEnable(GL_TEXTURE_2D);//은면제거
+	loadTexture();
+	
 	glEnable(GL_DEPTH_TEST);//은면제거
 	glEnable(GL_BLEND);//투명도
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

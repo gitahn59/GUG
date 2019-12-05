@@ -24,13 +24,15 @@ public:
 		int width = glutGet(GLUT_WINDOW_WIDTH);
 		int height = glutGet(GLUT_WINDOW_HEIGHT);
 
-		glMatrixMode(GL_VIEWPORT);
+		glMatrixMode(GL_VIEWPORT); // viewport : s
+		glPushMatrix();
 		glLoadIdentity();
 		glViewport(0, 0, width, height);
-		glPushMatrix();
-		glMatrixMode(GL_MODELVIEW);
+
+		glMatrixMode(GL_MODELVIEW); // modelview : s
 		glPushMatrix();
 		glLoadIdentity();
+
 		glBegin(GL_QUADS);
 		glColor4f(0.35, 0.16, 0.55, 1);
 		glVertex3f(-1, -1, 0);
@@ -40,6 +42,10 @@ public:
 		glVertex3f(-1, 1, 0);
 		glEnd();
 		glPopMatrix();
+
+		glMatrixMode(GL_VIEWPORT); // viewport : s
+		glPopMatrix();
+
 	}
 
 	void renderBitmapCharacher(float x, float y, float z, void* font, string s)

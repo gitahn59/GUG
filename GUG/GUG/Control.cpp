@@ -139,14 +139,17 @@ void Button::drawTexture() {
 	glMatrixMode(GL_PROJECTION); // projection : s
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(-1, 1, -1, 1, -5, 5);
+	glOrtho(-1.2, 1, -1.6, 1.6, -5, 5);
 	
 	glMatrixMode(GL_MODELVIEW); //model : s
 	glPushMatrix(); 
 	glLoadIdentity();
-	glColor4f(1, 1, 1, 0.1);
-	glInterleavedArrays(GL_T2F_V3F, 0, quadVertices);
-	glDrawArrays(GL_QUADS, 0, 4);
+	glColor4f(1, 1, 1, 0.3);
+	glBegin(GL_TRIANGLES);
+	glTexCoord2f(-0.2f, 0.5f); glVertex3f(-1, 0, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1, -1.6, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1, 1.6, 1.0f);
+	glEnd();
 	glPopMatrix(); //model : e
 	
 	glMatrixMode(GL_PROJECTION); 

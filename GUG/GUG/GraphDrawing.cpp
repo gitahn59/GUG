@@ -38,8 +38,10 @@ void GraphDrawing::displayCallback() {
 	glLoadIdentity();
 	
 	btn.setText("BACK");
-	btn.setArea(Rect(width / 2 + w / 1.9, height / 30, w / 6, height / 6));
+	btn.setArea(Rect(width/40, height/2-height/12, w / 7, height / 6));
+	glEnable(GL_TEXTURE_2D);
 	btn.drawTexture();
+	glDisable(GL_TEXTURE_2D);
 
 	// graph : s
 	glViewport(width/2-w/2, height/2-h/2, w,h);

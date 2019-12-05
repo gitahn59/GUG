@@ -74,14 +74,11 @@ void Equation::setControlsPosition(int width, int height) {
 
 void Equation::displayCallback() {
 	setControlsPosition(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-
 	drawPanel();
-	
 	for (int i = 0; i < 4; i++) {
 		for (int k = 0; k < 7; k++) {
 			if (i == 1 && k == 6)
 				continue;
-
 			if (buttons[i][k].getIsHover()) {
 				buttons[i][k].drawLight();
 			}

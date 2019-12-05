@@ -1,3 +1,12 @@
+//============================================================================
+// Name        : Main.cpp
+// Author      : gitahn59
+// Version     : 1.0
+// Copyright   : MIT
+// Description : MathExpression.h를 구현
+//============================================================================
+
+#pragma once
 #include "MathExpression.h"
 #include <vector>
 #include <string>
@@ -19,20 +28,20 @@ Operand::Operand(enum oprd type, double a, double b) {
 	this->type = type;
 	this->a = a;
 	this->b = b;
-	usingX = false;
+	this->usingX = false;
 }
 
 // x를 사용하는 NUMBER, SIN, COS, TAN, log
 Operand::Operand(bool usingX,enum oprd type ) {
 	this->type = type;
-	usingX = true;
+	this->usingX = true;
 }
 
 //x를 사용하는 root a(root(b)), exponentiation(b^a)
 Operand::Operand(bool usingX,enum oprd type, double a) {
 	this->type = type;
 	this->a = a;
-	usingX = true;
+	this->usingX = true;
 }
 
 double Operand::getValue(double x) {
@@ -87,18 +96,6 @@ Operator::Operator(enum op type) {
 		priority = 2;
 	}
 
-}
-
-bool Operator::isOperator(){
-	return true;
-}
-
-int Operator::getPriority() {
-	return priority;
-}
-
-enum op Operator::getType() {
-	return type;
 }
 
 Operand* Expression::stringToOperand(string s) {

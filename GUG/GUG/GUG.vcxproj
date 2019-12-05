@@ -127,7 +127,7 @@
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Equation.cpp" />
     <ClCompile Include="MathExpression.cpp" />
-    <ClCompile Include="State.cpp" />
+    <ClCompile Include="GraphDrawing.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

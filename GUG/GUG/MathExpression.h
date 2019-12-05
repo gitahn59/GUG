@@ -1,5 +1,14 @@
-#pragma once
+//============================================================================
+// Name        : MathExpression.h
+// Author      : gitahn59
+// Version     : 1.0
+// Copyright   : MIT
+// Description : 수식 관련 클래스를 정의한다.
+//               string으로 작성된 수식을 후위표기법으로 변환하여 계산하고
+//               각각 그 결과를 vector로 변환하여 리턴한다.
+//============================================================================
 
+#pragma once
 #include <cmath>
 #include <stack>
 #include <vector>
@@ -53,9 +62,9 @@ private:
 	int priority = 0;
 public:
 	Operator(enum op type);
-	bool isOperator() override;
-	int getPriority();
-	enum op getType();
+	bool isOperator() override { return true; }
+	int getPriority() { return priority; }
+	enum op getType() { return type; }
 };
 
 class Expression {

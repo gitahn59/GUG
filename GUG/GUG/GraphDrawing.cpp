@@ -1,12 +1,15 @@
 //============================================================================
-// Name        : Main.cpp
+// Name        : Equation.cpp
 // Author      : gitahn59
 // Version     : 1.0
 // Copyright   : MIT
-// Description : State.h를 구현
+// Description : IState.h의 Class중에서 GraphDrawing Class를 구현
+//               GraphDrawing는 Equation에서 입력받은 수식을 바탕으로
+//               그래프를 화면에 도시한다.
 //============================================================================
 
 #pragma once
+
 #include "State.h"
 #include "Control.h"
 #include "MathExpression.h"
@@ -15,36 +18,12 @@
 
 using namespace std;
 
-void renderBitmapCharacher(float x, float y, float z, void* font, string s)
-{
-	glRasterPos3f(x, y, z);
-	for (int i = 0; i < s.length(); i++) {
-		glutBitmapCharacter(font, s[i]);
-	}
-}
-
 void GraphDrawing::displayCallback() {
-	width = glutGet(GLUT_WINDOW_WIDTH);
-	height = glutGet(GLUT_WINDOW_HEIGHT);
+	int width = glutGet(GLUT_WINDOW_WIDTH);
+	int height = glutGet(GLUT_WINDOW_HEIGHT);
 	
-	glMatrixMode(GL_VIEWPORT);
-	glLoadIdentity();
-	glViewport(0, 0, width, height);
-	glPushMatrix();
-	glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-			glLoadIdentity();
-			glBegin(GL_QUADS);
-				glColor4f(0.35, 0.16, 0.55, 1);
-				glVertex3f(-1, -1, 0);
-				glVertex3f(1, -1, 0);
-				glColor4f(0.26, 0.52, 0.63, 1);
-				glVertex3f(1, 1, 0);
-				glVertex3f(-1, 1, 0);
-			glEnd();
-		glPopMatrix();
-	glMatrixMode(GL_VIEWPORT);
-	glLoadIdentity();
+	drawPanel();
+
 	float w = width * 0.7;
 	float h;
 	if (w < height) {
@@ -55,22 +34,31 @@ void GraphDrawing::displayCallback() {
 		h = w;
 	}
 
-	btn.setArea(Rect(width / 2 + w / 1.9, height / 8, w / 6, height / 6));
-	btn.draw();
+	glMatrixMode(GL_VIEWPORT);
+	glLoadIdentity();
+	
+	btn.setText("BACK");
+	btn.setArea(Rect(width/40, height/2-height/12, w / 7, height / 6));
+	glEnable(GL_TEXTURE_2D);
+	btn.drawTexture();
+	glDisable(GL_TEXTURE_2D);
 
+	// graph : s
 	glViewport(width/2-w/2, height/2-h/2, w,h);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-	glOrtho(-rangeW, rangeW, -rangeH, rangeH, -2, 2);
+	glOrtho(-rangeW, rangeW, -rangeH, rangeH, -5, 5);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	
 	glLoadIdentity();
-	gluLookAt(0, 0, 1, 0, 0, -1, 0, 1, 0);
-	glColor4f(1, 1, 1, 0.5);
+
+	glColor4f(0, 0, 0, 0.5);
 	int font = (int)GLUT_BITMAP_HELVETICA_18;
-	renderBitmapCharacher(0, -0.1, 0.5, (void*)font, "text");
+	renderBitmapCharacher(0, rangeH*0.95,0.5, (void*)font,to_string(rangeH));
+	renderBitmapCharacher(0, -rangeH, 0.5, (void*)font, "-"+to_string(rangeH));
+	renderBitmapCharacher(rangeW * 0.95,0, 0.5, (void*)font, to_string(rangeW));
+	renderBitmapCharacher(-rangeW,0, 0.5, (void*)font, "-" + to_string(rangeW));
 
 	glBegin(GL_QUADS);
 	glColor4f(1,1,1,0.4);
@@ -80,8 +68,6 @@ void GraphDrawing::displayCallback() {
 	glVertex3f(-rangeW, rangeH, 0.2);
 	glEnd();
 	
-	vector<bff> vbff = expression->calculate(-rangeW, rangeW, 0.01);
-
 	glColor4f(0, 0, 0, 1);
 	glBegin(GL_LINES);
 	glVertex3f(-rangeW, 0, 0.4);
@@ -89,6 +75,8 @@ void GraphDrawing::displayCallback() {
 	glVertex3f(0, -rangeH, 0.4);
 	glVertex3f(0, rangeH, 0.4);
 	glEnd();
+
+	vector<bff> vbff = expression->calculate(-rangeW, rangeW, 0.01);
 
 	glColor4f(0.66, 0.26, 0.25, 0.9);
 	glBegin(GL_LINES);
@@ -104,7 +92,7 @@ void GraphDrawing::displayCallback() {
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-
+	//graph : e
 	
 
 }
@@ -138,8 +126,7 @@ void GraphDrawing::mouseCallback(int button, int state, int x, int y) {
 }
 
 void GraphDrawing::reshpeCallback(int width, int height) {
-	this->width = width;
-	this->height = height;
+	
 }
 
 int  GraphDrawing::getType() {

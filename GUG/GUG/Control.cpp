@@ -28,11 +28,31 @@ bool Rect::isIn(int x, int y) {
 }
 // Rect : e
 
-void IControl::renderBitmapCharacher(float x, float y, float z, void* font, string s)
+void IControl::drawStringAtCenter(float width, float y, float z, string s)
 {
-	glRasterPos3f(x, y, z);
+	int font = (int)GLUT_BITMAP_HELVETICA_18;
+	int sum = 0;
 	for (int i = 0; i < s.length(); i++) {
-		glutBitmapCharacter(font, s[i]);
+		sum+= glutBitmapWidth((void*)font, (int)s[i]);
+	}
+	float centerX = (float)sum / width;
+	glRasterPos3f(-centerX, y, z);
+	for (int i = 0; i < s.length(); i++) {
+		glutBitmapCharacter((void*)font, s[i]);
+	}
+}
+
+void IControl::drawStringAtRight(float width, float y, float z, string s)
+{
+	int font = (int)GLUT_BITMAP_HELVETICA_18;
+	int sum = 0; 
+	for (int i = 0; i < s.length(); i++) {
+		sum += glutBitmapWidth((void*)font, (int)s[i]);
+	}
+	float rightX = (float)sum*2 / (width);
+	glRasterPos3f(0.945-rightX, y, z);
+	for (int i = 0; i < s.length(); i++) {
+		glutBitmapCharacter((void*)font, s[i]);
 	}
 }
 
@@ -59,8 +79,8 @@ void Button::draw() {
 	glLoadIdentity();
 	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 	glColor4f(1, 1, 1,0.5);
-	int font = (int)GLUT_BITMAP_HELVETICA_18;
-	renderBitmapCharacher(center[0], center[1], center[2], (void*)font, printedText);
+	
+	drawStringAtCenter(area.getWidth(), center[1], center[2], printedText);
 
 	glColor4f(1,1,1, 0.05);
 	glBegin(GL_QUADS);
@@ -76,62 +96,46 @@ void Button::draw() {
 
 void Button::drawLight() {
 	hovered = false;
-
-	const GLfloat red[] = { 0.8f, 0.0, 0.0, 1.0 };
-	const GLfloat blue[] = { 0.0, 0.2f, 1.0, 1.0 };
-	const GLfloat white[] = { 1.0, 1.0, 1.0, 0.1 };
-	const GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
+	const GLfloat white[] = { 1.0, 1.0, 1.0, 0.15 };
 	const GLfloat polished[] = { 100.0 };
 	const GLfloat light_pos[] = { 0.0, 0.0, 1.0, 1.0 };
-	GLfloat const_att = 2.5;
 
 	glMatrixMode(GL_VIEWPORT);
 	glPushMatrix();//viewport:s
 	glViewport(area.getX(), area.getY(), area.getWidth(), area.getHeight());
 	
 	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();//light:s
-	glTranslatef(0, 0, 1);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, const_att);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE,  white);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	glDisable(GL_LIGHTING);
-	glEnable(GL_LIGHTING);
-	glPopMatrix();//light:e
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+	glMaterialfv(GL_FRONT, GL_SHININESS, polished);
 	
 	glPushMatrix();//model:s
 		glLoadIdentity();
 		gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
-
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-		glMaterialfv(GL_FRONT, GL_SHININESS, polished);
-		glDisable(GL_LIGHTING);
 		glColor4f(1, 1, 1, 0.7);
 		int font = (int)GLUT_BITMAP_HELVETICA_18;
-		renderBitmapCharacher(center[0], center[1], center[2], (void*)font, printedText);
-		glColor4f(1, 1, 1, 0.2);
+		drawStringAtCenter(area.getWidth(), center[1], center[2], printedText);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 		glBegin(GL_QUADS);
 		glVertex3f(-0.95, -0.95, -1);
 		glVertex3f(0.95, -0.95, -1);
 		glVertex3f(0.95, 0.95, -1);
 		glVertex3f(-0.95, 0.95, -1);
 		glEnd();
-		glEnable(GL_LIGHTING);
 	glPopMatrix();//model:e
 	
 	glMatrixMode(GL_VIEWPORT);
 	glPopMatrix();//viewport:e
+	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 }
 
-void Button::drawTexture() {
-	Vertex quadVertices[] = {
-		{ 0.0f,0.0f, -1.0f,-1.0f, 1.0f },
-		{ 1.0f,0.0f,  1.0f,-1.0f, 1.0f },
-		{ 1.0f,1.0f,  1.0f, 1.0f, 1.0f },
-		{ 0.0f,1.0f, -1.0f, 1.0f, 1.0f }
-	};
-
+void Button::drawTriangleTexture(GLuint id) {
 	glMatrixMode(GL_VIEWPORT); //viewport : s
 	glPushMatrix();
 	glViewport(area.getX(), area.getY(), area.getWidth(), area.getHeight());
@@ -145,14 +149,49 @@ void Button::drawTexture() {
 	glPushMatrix(); 
 	glLoadIdentity();
 	glColor4f(1, 1, 1, 0.3);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, id);
 	glBegin(GL_TRIANGLES);
 	glTexCoord2f(-0.2f, 0.5f); glVertex3f(-1, 0, 1.0f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(1, -1.6, 1.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(1, 1.6, 1.0f);
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix(); //model : e
 	
 	glMatrixMode(GL_PROJECTION); 
+	glPopMatrix(); // projection : e
+
+	glMatrixMode(GL_VIEWPORT);
+	glPopMatrix(); //viewport : e
+}
+
+void Button::drawQuadsTexture(GLuint id) {
+	glMatrixMode(GL_VIEWPORT); //viewport : s
+	glPushMatrix();
+	glViewport(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+
+	glMatrixMode(GL_PROJECTION); // projection : s
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(-0.75, 0.75, -0.65, 0.65, -1, 1);
+	
+	glMatrixMode(GL_MODELVIEW); //model : s
+	glPushMatrix();
+	glLoadIdentity();
+	glColor4f(1, 1, 1, 0.3);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1, -1, 1);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1, -1, 1);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1, 1, 1);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1, 1, 1);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix(); //model : e
+
+	glMatrixMode(GL_PROJECTION);
 	glPopMatrix(); // projection : e
 
 	glMatrixMode(GL_VIEWPORT);
@@ -196,7 +235,7 @@ void TextBox::draw(string expression) {
 	int font = (int)GLUT_BITMAP_HELVETICA_18;
 
 	string temp = expToText(expression);
-	renderBitmapCharacher(0.95-temp.length()*0.032, -0.1, -0.5, (void*)font, temp);
+	drawStringAtRight(area.getWidth(), -0.1, -0.5, temp);
 
 	glColor4f(1, 1, 1, 0.05);
 	glBegin(GL_QUADS);

@@ -1,15 +1,20 @@
-//============================================================================
-// Name        : State.h
-// Author      : gitahn59
-// Version     : 1.0
-// Copyright   : MIT
-// Description : State에 관련된 클래스의 헤더파일, 프로그램의 State를 정의한다. 
-//               그리고 State들의 Interface인 IState를 정의한다.
-//============================================================================
-
+/*
+============================================================================
+Name        : State.h
+Author      : gitahn59
+Version     : 1.0
+Copyright   : MIT
+Description : State에 관련된 클래스의 헤더파일, 프로그램의 State를 정의한다. 
+              그리고 State들의 Interface인 IState를 정의한다.
+============================================================================
+*/
 #pragma once
 #include "Control.h"
 #include "MathExpression.h"
+#include <glaux.h>
+
+#pragma comment(lib, "glaux.lib")
+#pragma comment (lib,"legacy_stdio_definitions.lib")
 
 class IState
 {
@@ -18,7 +23,6 @@ public:
 	virtual void keyboardCallback(unsigned char key, int state, int x, int y) = 0;
 	virtual void specialCallback(int key, int x, int y) = 0;
 	virtual void mouseCallback(int btn, int state, int x, int y) = 0;
-	virtual void reshpeCallback(int x, int y) = 0;
 	virtual int getType() = 0;
 	void drawPanel() {
 		int width = glutGet(GLUT_WINDOW_WIDTH);
@@ -71,7 +75,6 @@ public:
 	void keyboardCallback(unsigned char key, int state, int x, int y) override;
 	void specialCallback(int key, int x, int y) override {}
 	void mouseCallback(int btn, int state, int x, int y) override;
-	void reshpeCallback(int width, int height) override;
 	void passiveMotionCallback(int x, int y);
 
 	int getType() override;
@@ -92,7 +95,14 @@ public:
 class GraphDrawing : public IState {
 private:
 	Expression* expression;
-	Button btn;
+	Button backBtn;
+	Button rightBtn;
+	Button leftBtn;
+	Button swapBtn;
+	GLuint textureObjectID[4];
+	bool swap;
+
+	int angle = 0;
 	int rangeW = 3;
 	int rangeH = 3;
 	bool backBtnClicked = false;
@@ -110,19 +120,22 @@ private:
 		if (rangeH >= 2)
 			rangeH--;
 	}
+
 public:
+	void loadTexture();
 	GraphDrawing() {
-		btn = Button(Rect(0, 0, 0, 0), "Back");
+		backBtn = Button(Rect(0, 0, 0, 0), "Back");
 	}
 	void displayCallback() override;
 	void keyboardCallback(unsigned char key, int state, int x, int y) override;
 	void specialCallback(int key, int x, int y) override;
 	void mouseCallback(int btn, int state, int x, int y) override;
-	void reshpeCallback(int width, int height) override;
 	int getType() override;
 	void setExpressions(Expression* expression) {
 		rangeW = 3;
 		rangeH = 3;
+		angle = 0;
+		swap = false;
 		this->expression = expression;
 	}
 	bool isBackBtnClicked() {

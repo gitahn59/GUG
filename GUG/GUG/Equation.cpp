@@ -27,7 +27,6 @@ Equation::Equation() {
 	buttons[3][2].setText("8");
 	buttons[3][3].setText("9");
 	buttons[3][4].setText("/");
-	//buttons[3][4].setPrintedText("¡À");
 	buttons[3][5].setText("<-");
 	buttons[3][6].setText("X");
 
@@ -37,7 +36,6 @@ Equation::Equation() {
 	buttons[2][2].setText("5");
 	buttons[2][3].setText("6");
 	buttons[2][4].setText("*");
-	//buttons[2][4].setPrintedText("x");
 	buttons[2][5].setText("s");
 	buttons[2][5].setPrintedText("sin");
 	buttons[2][6].setText("C");
@@ -90,11 +88,6 @@ void Equation::displayCallback() {
 
 	textBox.draw(expression);
 
-}
-
-void Equation::reshpeCallback(int width, int height) {
-	this->width = width;
-	this->height = height;
 }
 
 void Equation::keyboardCallback(unsigned char key, int state, int x, int y) {

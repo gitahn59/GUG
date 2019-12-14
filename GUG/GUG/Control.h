@@ -1,12 +1,15 @@
-//============================================================================
-// Name        : Control.h
-// Author      : gitahn59
-// Version     : 1.0
-// Copyright   : MIT
-// Description : Control에 대한 헤더파일. 
-//               사용자의 컨트롤의 interface를 정의하고, 이를 상속하는 Button, 
-//				 TextBox를 정의한다.
-//============================================================================
+/*
+============================================================================
+Name        : Control.h
+Author      : gitahn59
+Version     : 1.0
+Copyright   : MIT
+Description : Control에 대한 헤더파일
+사용자의 컨트롤의 interface IControl을 정의하고 이를 상속하는 Button, TextBox를 선언한다.
+구성 클래스
+IControl, Button, TextBox
+============================================================================
+*/
 
 #pragma once
 #include <string>
@@ -25,7 +28,8 @@ class IControl
 public:
 	virtual void draw() = 0;
 	virtual bool isHover(int x,int y) = 0;
-	void renderBitmapCharacher(float x, float y, float z, void* font, string s);
+	void drawStringAtCenter(float width, float y, float z, string s);
+	void drawStringAtRight(float width, float y, float z, string s);
 };
 
 class Rect {
@@ -56,7 +60,8 @@ public:
 	Button(Rect area,string text);
 	void draw() override;
 	void drawLight();
-	void drawTexture();
+	void drawTriangleTexture(GLuint id);
+	void drawQuadsTexture(GLuint id);
 	bool isHover(int x, int y) override;
 	void setArea(Rect area);
 	string toString();

@@ -265,8 +265,8 @@ float arithmetic(float a, float b, enum op operation,bool *flag) {
 	return 0;
 }
 
-vector<bff> Expression::calculate(float start, float end, float interver) {
-	vector<bff> vbff;
+vector<Node> Expression::calculate(float start, float end, float interver) {
+	vector<Node> nodes;
 	int len = postorderExpression.size();
 	for (start; start <= end; start += interver) {
 		stack<float> soperand;
@@ -291,8 +291,11 @@ vector<bff> Expression::calculate(float start, float end, float interver) {
 				soperand.push(((Operand*)postorderExpression[i])->getValue(start));
 			}
 		}
-		if(!soperand.empty())
-			vbff.push_back(make_pair(flag,make_pair(start, soperand.top())));
+		if (!soperand.empty()) {
+			if(flag && !isnan(soperand.top()))
+				nodes.push_back(Node(start, soperand.top()));
+		}
+
 	}
-	return vbff;
+	return nodes;
 }

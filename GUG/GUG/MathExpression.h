@@ -1,12 +1,15 @@
-//============================================================================
-// Name        : MathExpression.h
-// Author      : gitahn59
-// Version     : 1.0
-// Copyright   : MIT
-// Description : 수식 관련 클래스를 정의한다.
-//               string으로 작성된 수식을 후위표기법으로 변환하여 계산하고
-//               각각 그 결과를 vector로 변환하여 리턴한다.
-//============================================================================
+/*
+============================================================================
+Name        : MathExpression.h
+Author      : gitahn59
+Version     : 1.0
+Copyright   : MIT
+Description : 수식 관련 클래스를 정의한다.
+               string으로 작성된 수식을 후위표기법으로 변환하여 계산하고
+               각각 그 결과를 vector로 변환하여 리턴한다.
+			   Node, OP. Operand, Operator, Expression
+============================================================================
+*/
 
 #pragma once
 #include <cmath>
@@ -16,8 +19,15 @@
 
 using namespace std;
 
-typedef pair<float, float> ff;
-typedef pair<bool, ff> bff;
+class Node{
+private:
+public:
+	float x, y;
+	Node(float x, float y) {
+		this->x = x;
+		this->y = y;
+	}
+};
 
 class OP {
 public:
@@ -78,5 +88,5 @@ public:
 	Expression() {}
 	Expression(string exp);
 	~Expression();
-	vector<bff> calculate(float start, float end, float interver);
+	vector<Node> calculate(float start, float end, float interver);
 };

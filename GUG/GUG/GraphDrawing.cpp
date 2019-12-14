@@ -24,24 +24,28 @@ void GraphDrawing::displayCallback() {
 	
 	drawPanel();
 
-	float w = width * 0.7;
+	float w = width * 0.6;
 	float h;
 	if (w < height) {
 		h = w;
 	}
 	else {
-		w = height * 0.9;
+		w = height * 0.85;
 		h = w;
 	}
 
 	glMatrixMode(GL_VIEWPORT);
 	glLoadIdentity();
 	
-	btn.setText("BACK");
-	btn.setArea(Rect(width/40, height/2-height/12, w / 7, height / 6));
-	glEnable(GL_TEXTURE_2D);
-	btn.drawTexture();
-	glDisable(GL_TEXTURE_2D);
+	backBtn.setArea(Rect(width/40, height/2-height/12, w / 7, height / 6));
+	leftBtn.setArea(Rect(width / 2 + w / 2 - 115, height / 2 + h / 2 + 4, 33, 33));
+	rightBtn.setArea(Rect(width / 2 + w / 2 - 75, height / 2 + h / 2 + 4, 33, 33));
+	swapBtn.setArea(Rect(width / 2 + w /2-35, height / 2+h/2+4, 33, 33));
+
+	backBtn.drawTriangleTexture(textureObjectID[0]);
+	leftBtn.drawQuadsTexture(textureObjectID[1]);
+	rightBtn.drawQuadsTexture(textureObjectID[2]);
+	swapBtn.drawQuadsTexture(textureObjectID[3]);
 
 	// graph : s
 	glViewport(width/2-w/2, height/2-h/2, w,h);
@@ -49,6 +53,7 @@ void GraphDrawing::displayCallback() {
 	glPushMatrix();
 	glOrtho(-rangeW, rangeW, -rangeH, rangeH, -5, 5);
 
+	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
@@ -69,32 +74,43 @@ void GraphDrawing::displayCallback() {
 	glEnd();
 	
 	glColor4f(0, 0, 0, 1);
-	glBegin(GL_LINES);
-	glVertex3f(-rangeW, 0, 0.4);
-	glVertex3f(rangeW, 0, 0.4);
-	glVertex3f(0, -rangeH, 0.4);
-	glVertex3f(0, rangeH, 0.4);
+		glBegin(GL_LINES);
+		glVertex3f(-rangeW, 0, 0.4);
+		glVertex3f(rangeW, 0, 0.4);
+		glVertex3f(0, -rangeH, 0.4);
+		glVertex3f(0, rangeH, 0.4);
 	glEnd();
 
-	vector<bff> vbff = expression->calculate(-rangeW, rangeW, 0.01);
-
+	if (swap)
+		glScalef(-1, 1, 1);
+	glRotatef(angle, 0, 0, -1);
+	
 	glColor4f(0.66, 0.26, 0.25, 0.9);
 	glBegin(GL_LINES);
-	int len = vbff.size();
+	vector<Node> leftNodes = expression->calculate(-rangeW, 0, 0.01);
+	int len = leftNodes.size();
 	for (int i = 0; i < len - 1; i++){
-		if (vbff[i].first && vbff[i+1].first) {
-			glVertex3f(vbff[i].second.first, vbff[i].second.second, 0.6);
-			glVertex3f(vbff[i + 1].second.first, vbff[i + 1].second.second, 0.6);
-		}
+		glVertex3f(leftNodes[i].x, leftNodes[i].y, 0.6);
+		glVertex3f(leftNodes[i+1].x, leftNodes[i+1].y, 0.6);
 	}
 	glEnd();
 
+	glColor4f(0.66, 0.26, 0.25, 0.9);
+	glBegin(GL_LINES);
+	vector<Node> rightNodes = expression->calculate(0, rangeW, 0.01);
+	len = rightNodes.size();
+	for (int i = 0; i < len - 1; i++) {
+		glVertex3f(rightNodes[i].x, rightNodes[i].y, 0.6);
+		glVertex3f(rightNodes[i + 1].x, rightNodes[i + 1].y, 0.6);
+	}
+	glEnd();
+
+	
+	glDisable(GL_DEPTH_TEST);
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	//graph : e
-	
-
 }
 
 void GraphDrawing::keyboardCallback(unsigned char key, int state, int x, int y) {
@@ -119,16 +135,87 @@ void GraphDrawing::specialCallback(int key, int x, int y) {
 }
 
 void GraphDrawing::mouseCallback(int button, int state, int x, int y) {
-	if (btn.isHover(x, y)) {
+	if (backBtn.isHover(x, y)) {
 		backBtnClicked = true;
+	}else if (rightBtn.isHover(x, y)) {
+		angle += 90;
 	}
-	cout << "Current State is GraphDrawing\n";
-}
+	else if (leftBtn.isHover(x, y)) {
+		angle -= 90;
+	}
+	else if (swapBtn.isHover(x, y)) {
+		swap = !swap;
+	}
 
-void GraphDrawing::reshpeCallback(int width, int height) {
-	
+	cout << "Current State is GraphDrawing\n";
 }
 
 int  GraphDrawing::getType() {
 	return 3;
+}
+
+void GraphDrawing::loadTexture(void) {
+	glGenTextures(3, textureObjectID);
+
+	AUX_RGBImageRec* pTextureImage = auxDIBImageLoad("arrow.bmp"); // 유니코드 스트링임을 명시
+
+	if (pTextureImage != NULL) {
+		glBindTexture(GL_TEXTURE_2D, textureObjectID[0]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTextureImage->sizeX, pTextureImage->sizeY, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, pTextureImage->data);
+	}
+
+	if (pTextureImage) {
+		if (pTextureImage->data)
+			free(pTextureImage->data);
+		free(pTextureImage);
+	}
+
+	pTextureImage = auxDIBImageLoad("left.bmp"); // 유니코드 스트링임을 명시
+	if (pTextureImage != NULL) {
+		glBindTexture(GL_TEXTURE_2D, textureObjectID[1]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTextureImage->sizeX, pTextureImage->sizeY, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, pTextureImage->data);
+	}
+
+	if (pTextureImage) {
+		if (pTextureImage->data)
+			free(pTextureImage->data);
+		free(pTextureImage);
+	}
+
+
+	pTextureImage = auxDIBImageLoad("right.bmp"); // 유니코드 스트링임을 명시
+	if (pTextureImage != NULL) {
+		glBindTexture(GL_TEXTURE_2D, textureObjectID[2]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTextureImage->sizeX, pTextureImage->sizeY, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, pTextureImage->data);
+	}
+
+	if (pTextureImage) {
+		if (pTextureImage->data)
+			free(pTextureImage->data);
+		free(pTextureImage);
+	}
+
+	pTextureImage = auxDIBImageLoad("swap.bmp"); // 유니코드 스트링임을 명시
+	if (pTextureImage != NULL) {
+		glBindTexture(GL_TEXTURE_2D, textureObjectID[3]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTextureImage->sizeX, pTextureImage->sizeY, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, pTextureImage->data);
+	}
+
+	if (pTextureImage) {
+		if (pTextureImage->data)
+			free(pTextureImage->data);
+		free(pTextureImage);
+	}
 }

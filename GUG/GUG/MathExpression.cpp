@@ -1,6 +1,5 @@
 //============================================================================
-// Name        : Main.cpp
-// Author      : gitahn59
+// Name        : MathExpression.cpp
 // Version     : 1.0
 // Copyright   : MIT
 // Description : MathExpression.h¸¦ ±¸Çö

@@ -1,6 +1,5 @@
 //============================================================================
 // Name        : Equation.cpp
-// Author      : gitahn59
 // Version     : 1.0
 // Copyright   : MIT
 // Description : IState.h의 Class중에서 Equation Class를 구현
@@ -87,10 +86,6 @@ void Equation::displayCallback() {
 	}
 
 	textBox.draw(expression);
-
-}
-
-void Equation::keyboardCallback(unsigned char key, int state, int x, int y) {
 
 }
 

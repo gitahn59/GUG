@@ -1,7 +1,6 @@
 /*
 ============================================================================
 Name        : MathExpression.h
-Author      : gitahn59
 Version     : 1.0
 Copyright   : MIT
 Description : 수식 관련 클래스를 정의한다.

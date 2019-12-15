@@ -1,6 +1,5 @@
 //============================================================================
-// Name        : Equation.cpp
-// Author      : gitahn59
+// Name        : GraphDrawing.cpp
 // Version     : 1.0
 // Copyright   : MIT
 // Description : IState.h의 Class중에서 GraphDrawing Class를 구현
@@ -53,7 +52,7 @@ void GraphDrawing::displayCallback() {
 	glPushMatrix();
 	glOrtho(-rangeW, rangeW, -rangeH, rangeH, -5, 5);
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST); // 은면 제거
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
@@ -111,10 +110,6 @@ void GraphDrawing::displayCallback() {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	//graph : e
-}
-
-void GraphDrawing::keyboardCallback(unsigned char key, int state, int x, int y) {
-
 }
 
 void GraphDrawing::specialCallback(int key, int x, int y) {

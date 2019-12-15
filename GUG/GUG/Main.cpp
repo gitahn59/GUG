@@ -1,6 +1,5 @@
 //============================================================================
 // Name        : Main.cpp
-// Author      : gitahn59
 // Version     : 1.0
 // Copyright   : MIT
 // Description : Main thread. 사용자의 이벤트를 각 State로 전달한다
@@ -87,6 +86,9 @@ int main(int argc, char** argv) {
 	
 	glEnable(GL_BLEND);//투명도
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);//후면 제거 활성화
+	glFrontFace(GL_CCW);//후면 선택
+	glCullFace(GL_BACK);// 제거
 	st = &equation;
 	graphDrawing.loadTexture();
 	glutMainLoop();

@@ -1,7 +1,6 @@
 /*
 ============================================================================
 Name        : Control.h
-Author      : gitahn59
 Version     : 1.0
 Copyright   : MIT
 Description : Control에 대한 헤더파일

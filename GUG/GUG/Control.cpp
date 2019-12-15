@@ -1,6 +1,5 @@
 //============================================================================
 // Name        : Control.cpp
-// Author      : gitahn59
 // Version     : 1.0
 // Copyright   : MIT
 // Description : Control.h¸¦ ±¸Çö 

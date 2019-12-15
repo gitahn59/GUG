@@ -1,7 +1,6 @@
 /*
 ============================================================================
 Name        : State.h
-Author      : gitahn59
 Version     : 1.0
 Copyright   : MIT
 Description : State에 관련된 클래스의 헤더파일, 프로그램의 State를 정의한다. 
@@ -20,7 +19,6 @@ class IState
 {
 public:
 	virtual void displayCallback() = 0;
-	virtual void keyboardCallback(unsigned char key, int state, int x, int y) = 0;
 	virtual void specialCallback(int key, int x, int y) = 0;
 	virtual void mouseCallback(int btn, int state, int x, int y) = 0;
 	virtual int getType() = 0;
@@ -72,7 +70,6 @@ private:
 public:
 	Equation();
 	void displayCallback() override;
-	void keyboardCallback(unsigned char key, int state, int x, int y) override;
 	void specialCallback(int key, int x, int y) override {}
 	void mouseCallback(int btn, int state, int x, int y) override;
 	void passiveMotionCallback(int x, int y);
@@ -127,7 +124,6 @@ public:
 		backBtn = Button(Rect(0, 0, 0, 0), "Back");
 	}
 	void displayCallback() override;
-	void keyboardCallback(unsigned char key, int state, int x, int y) override;
 	void specialCallback(int key, int x, int y) override;
 	void mouseCallback(int btn, int state, int x, int y) override;
 	int getType() override;
